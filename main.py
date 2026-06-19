@@ -1,5 +1,10 @@
 import streamlit as st #스트림릿 페이지
 
+#import대상 :파일(.py)
+#from파일 import 함수,클래스 ->해당 파일의 일부 함수/클래스만 임포트
+#import crawling as cr
+from crawling import crawling_saramin,crawling_work24
+
 #레이아웃(웹페이지의 생김새)
 #스트림릿 웹페이지의 '헤더'역할
 st.set_page_config(page_title="채용공고 자동 크롤링 서비스", layout='wide')
@@ -16,7 +21,6 @@ site_select = st.radio("크롤링할 사이트 선택",
 
 with st.expander("상세 검색 조건",expanded=True):
     col1,col2 = st.columns(2)
-
     with col1:
         # st.success('컬럼 1')
         search_text = st.text_input("검색어를 입력",placeholder = '예: 파이썬,인공지능')
@@ -83,6 +87,34 @@ with st.expander("상세 검색 조건",expanded=True):
             edu = st.selectbox('학력을 선택하세요',list(edu_options))
             edu = edu_options[edu]
            
+#st.button(버튼에 들어갈 글자,)'크기조절옵션'
+crawling_clicked = st.button("크롤링 시작",use_container_width=True,type='primary')
+#crawling_clicked -> True(버튼을 눌렀음)/False(버튼을 누르지 않았음)
+if crawling_clicked:
+    st.write('버튼을 누름')
+else:
+    st.write('버튼을 안누름')
 
-        
-    
+#크롤링 시행!!
+#1. 크롤링한 결과를 어떻게 받아올 것인가?
+# df =
+
+#2. 크롤링 하는동안 어떻게 안내할 것인가?
+if crawling_clicked:
+#2-1. 검색어나 필수요소가 누락된 경우 안내
+    if not search_text:
+        st.warning('검색어를 입력해주세요!')
+#2-2. 크롤링 시행하는동안 '기다려주세요' 라는 내용 표시
+    else:
+        with st.spinner(f'{site_select}에서 {search_text}검색 결과 가져오는중...'):
+            if site_select == '사람인':
+                #사람인 사이트의 내용을 크롤링하는 함수
+                df = crawling_saramin()
+            else:
+                #고용24 사이트의 내용을 크롤링하는 함수
+                df = crawling_work24()
+    st.session_state['df'] = df
+
+#st.session_state가 뭘까?
+#화면을 렌더링 할때에도 df의 정보를 기억하도록 만들어줌
+df = st.session_state.df
