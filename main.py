@@ -5,6 +5,9 @@ import pandas as pd
 #import crawling as cr
 from crawling import crawling_saramin,crawling_work24,download_to_csv
 
+if 'df' not in st.session_state:
+    st.session_state['df'] = pd.DataFrame()
+
 #레이아웃(웹페이지의 생김새)
 #스트림릿 웹페이지의 '헤더'역할
 st.set_page_config(page_title="채용공고 자동 크롤링 서비스", layout='wide')
@@ -142,6 +145,3 @@ if not df.empty:
                        file_name=f'crawling_results_{site_select}.csv',
                        mime='text/csv'
                        )
-if 'df' not in st.session_state:
-    st.session_state['df'] = pd.DataFrame()
- 
